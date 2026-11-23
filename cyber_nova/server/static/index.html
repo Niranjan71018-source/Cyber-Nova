@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER-NOVA // Autonomous Multi-Agent Cybersecurity Mesh</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;800&family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="cyber-theme">
+  <!-- Top Navigation Header -->
+  <header class="cyber-header">
+    <div class="header-left">
+      <div class="logo-group">
+        <div class="logo-shield">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+            <path d="M12 7v10M8 12h8" stroke-dasharray="2 2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">CYBER-NOVA</h1>
+          <span class="brand-subtitle">AUTONOMOUS MULTI-AGENT DEFENSE MESH</span>
+        </div>
+      </div>
+      <div class="incident-badge-group">
+        <span class="incident-id" id="inc-id-display">INC-2024-8921</span>
+        <span class="badge-severity severity-critical" id="inc-severity-display">CRITICAL</span>
+        <span class="badge-status status-triaged" id="inc-status-display">TRIAGED</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="scenario-selector-wrap">
+        <label for="scenario-select" class="selector-label">ACTIVE THREAT SCENARIO:</label>
+        <select id="scenario-select" class="cyber-select">
+          <option value="sql_injection_portal">SQL Injection & Unauthenticated DB Extraction (CVE-2024-28987)</option>
+          <option value="command_injection_diagnostics">Remote Code Execution via Diagnostics Ping (CVE-2024-23897)</option>
+          <option value="ssrf_cloud_metadata">Cloud Metadata SSRF & IAM Role Harvest (CVE-2024-21626)</option>
+          <option value="path_traversal_viewer">Directory Path Traversal & System File Disclosure (CVE-2024-38856)</option>
+        </select>
+        <button id="btn-custom-modal" class="btn-subtle" title="Input custom target code or telemetry">+ Custom</button>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="controls-toolbar">
+        <button id="btn-run" class="btn-cyber btn-primary">
+          <span class="icon">▶</span> Run Swarm
+        </button>
+        <button id="btn-step" class="btn-cyber btn-secondary">
+          <span class="icon">⏯</span> Step Next
+        </button>
+        <button id="btn-stop" class="btn-cyber btn-warning" disabled>
+          <span class="icon">⏹</span> Stop
+        </button>
+        <button id="btn-reset" class="btn-cyber btn-danger">
+          <span class="icon">↺</span> Reset
+        </button>
+        <div class="dropdown">
+          <button id="btn-export" class="btn-cyber btn-outline">
+            <span class="icon">⬇</span> Export Dossier
+          </button>
+          <div class="dropdown-content">
+            <a href="/api/incident/export?format=markdown" download="incident_dossier.md">Markdown Report (.md)</a>
+            <a href="/api/incident/export?format=json" download="incident_dossier.json">JSON State Bundle (.json)</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Multi-Agent Dashboard Workspace -->
+  <main class="cyber-container">
+    <!-- Top Grid: Agent Topology Mesh & Incident Telemetry -->
+    <div class="dashboard-row top-row">
+      <!-- Agent Mesh Topology Card -->
+      <section class="cyber-card mesh-card">
+        <div class="card-header">
+          <div class="header-title-wrap">
+            <span class="dot-indicator live"></span>
+            <h2>AGENT COLLABORATION MESH & TOOL DISPATCH</h2>
+          </div>
+          <span class="mesh-metric" id="active-agents-count">4 Agents Cooperating</span>
+        </div>
+        <div class="card-body mesh-canvas-wrap">
+          <!-- SVG Connector Overlay for Animated Data Packets -->
+          <svg class="mesh-svg-connectors" id="mesh-connectors">
+            <line id="link-0-1" x1="12%" y1="50%" x2="37%" y2="50%" stroke="#1f3b5c" stroke-width="3" stroke-dasharray="6,4"/>
+            <line id="link-1-2" x1="37%" y1="50%" x2="62%" y2="50%" stroke="#1f3b5c" stroke-width="3" stroke-dasharray="6,4"/>
+            <line id="link-2-3" x1="62%" y1="50%" x2="87%" y2="50%" stroke="#1f3b5c" stroke-width="3" stroke-dasharray="6,4"/>
+            <circle id="pulse-dot" cx="12%" cy="50%" r="5" fill="#00f3ff" class="pulse-packet hidden" />
+          </svg>
+
+          <!-- 4 Specialized Agent Nodes -->
+          <div class="agent-nodes-grid">
+            <!-- Node 1: Sentinel -->
+            <div class="agent-node" id="node-sentinel" data-agent="sentinel">
+              <div class="node-glow"></div>
+              <div class="node-icon">🛡️</div>
+              <div class="node-name">SENTINEL-01</div>
+              <div class="node-role">Recon & Triage</div>
+              <div class="node-status status-idle" id="sentinel-status">IDLE</div>
+              <div class="node-active-tool" id="sentinel-tool">threat_intel_enricher</div>
+            </div>
+
+            <!-- Node 2: Investigator -->
+            <div class="agent-node" id="node-investigator" data-agent="investigator">
+              <div class="node-glow"></div>
+              <div class="node-icon">🔍</div>
+              <div class="node-name">INVESTIGATOR-02</div>
+              <div class="node-role">Forensics & AST</div>
+              <div class="node-status status-idle" id="investigator-status">IDLE</div>
+              <div class="node-active-tool" id="investigator-tool">code_analyzer</div>
+            </div>
+
+            <!-- Node 3: Remediation -->
+            <div class="agent-node" id="node-remediation" data-agent="remediation">
+              <div class="node-glow"></div>
+              <div class="node-icon">🔧</div>
+              <div class="node-name">REMEDIATION-03</div>
+              <div class="node-role">Patch & Sandbox</div>
+              <div class="node-status status-idle" id="remediation-status">IDLE</div>
+              <div class="node-active-tool" id="remediation-tool">sandbox_verifier</div>
+            </div>
+
+            <!-- Node 4: Auditor -->
+            <div class="agent-node" id="node-auditor" data-agent="auditor">
+              <div class="node-glow"></div>
+              <div class="node-icon">📊</div>
+              <div class="node-name">AUDITOR-04</div>
+              <div class="node-role">Compliance & Seal</div>
+              <div class="node-status status-idle" id="auditor-status">IDLE</div>
+              <div class="node-active-tool" id="auditor-tool">audit_signer</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Incident Telemetry & Evidence Ledger -->
+      <section class="cyber-card telemetry-card">
+        <div class="card-header">
+          <h2>TELEMETRY INGESTION & THREAT IOCs</h2>
+          <span class="badge-mini" id="ioc-counter">0 IOCs</span>
+        </div>
+        <div class="card-body telemetry-body">
+          <div class="telemetry-tabs">
+            <button class="subtab-btn active" data-subtab="logs">Raw Telemetry</button>
+            <button class="subtab-btn" data-subtab="iocs">Extracted IOCs</button>
+            <button class="subtab-btn" data-subtab="vulnerabilities">Flaws (<span id="vuln-count-badge">0</span>)</button>
+          </div>
+          <div class="subtab-content active" id="subtab-logs">
+            <pre class="telemetry-log-stream" id="telemetry-logs-list"></pre>
+          </div>
+          <div class="subtab-content" id="subtab-iocs">
+            <div class="ioc-table-wrap">
+              <table class="cyber-table" id="ioc-table">
+                <thead>
+                  <tr><th>Type</th><th>Indicator</th><th>Reputation</th><th>Context</th></tr>
+                </thead>
+                <tbody id="ioc-table-body">
+                  <tr><td colspan="4" class="empty-state">No IOCs extracted yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="subtab-content" id="subtab-vulnerabilities">
+            <div class="vuln-cards-list" id="vuln-cards-list">
+              <div class="empty-state">Awaiting forensic code analysis...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Middle Row: Real-Time Kanban Task Board -->
+    <div class="dashboard-row kanban-row">
+      <section class="cyber-card kanban-card">
+        <div class="card-header">
+          <div class="header-title-wrap">
+            <h2>COLLABORATIVE TASK KANBAN</h2>
+            <span class="subtext">Inter-agent work coordination & dependency tracking</span>
+          </div>
+          <div class="kanban-metrics">
+            <span>Completed: <strong id="kanban-done-count">0</strong>/<strong id="kanban-total-count">0</strong></span>
+          </div>
+        </div>
+        <div class="card-body kanban-board-body">
+          <div class="kanban-column" id="col-todo">
+            <div class="column-header">
+              <span class="col-dot dot-todo"></span>
+              <h3>TODO</h3>
+              <span class="count-badge" id="count-todo">0</span>
+            </div>
+            <div class="column-tasks" id="tasks-todo"></div>
+          </div>
+
+          <div class="kanban-column" id="col-in-progress">
+            <div class="column-header">
+              <span class="col-dot dot-progress"></span>
+              <h3>IN PROGRESS</h3>
+              <span class="count-badge" id="count-progress">0</span>
+            </div>
+            <div class="column-tasks" id="tasks-progress"></div>
+          </div>
+
+          <div class="kanban-column" id="col-verifying">
+            <div class="column-header">
+              <span class="col-dot dot-verifying"></span>
+              <h3>VERIFYING</h3>
+              <span class="count-badge" id="count-verifying">0</span>
+            </div>
+            <div class="column-tasks" id="tasks-verifying"></div>
+          </div>
+
+          <div class="kanban-column" id="col-done">
+            <div class="column-header">
+              <span class="col-dot dot-done"></span>
+              <h3>RESOLVED / DONE</h3>
+              <span class="count-badge" id="count-done">0</span>
+            </div>
+            <div class="column-tasks" id="tasks-done"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Row: Multi-Tab Evidence & Verification Workspace -->
+    <div class="dashboard-row workspace-row">
+      <section class="cyber-card workspace-card">
+        <div class="card-header tabs-header">
+          <div class="workspace-tabs">
+            <button class="tab-btn active" data-tab="terminal">
+              <span class="tab-icon">💻</span> Agent Thought & Tool Terminal
+            </button>
+            <button class="tab-btn" data-tab="diff">
+              <span class="tab-icon">⚡</span> Patch Diff Inspector
+            </button>
+            <button class="tab-btn" data-tab="sandbox">
+              <span class="tab-icon">🧪</span> Sandbox Verification Proof
+            </button>
+            <button class="tab-btn" data-tab="rules">
+              <span class="tab-icon">🛡️</span> Defense-in-Depth Rules
+            </button>
+            <button class="tab-btn" data-tab="compliance">
+              <span class="tab-icon">📜</span> Executive Audit & Sign-Off
+            </button>
+          </div>
+          <div class="workspace-header-actions">
+            <label class="auto-scroll-label">
+              <input type="checkbox" id="auto-scroll-toggle" checked> Auto-Scroll Terminal
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body workspace-body">
+          <!-- Tab 1: Terminal & Inter-Agent Stream -->
+          <div class="tab-pane active" id="pane-terminal">
+            <div class="terminal-toolbar">
+              <div class="filter-group">
+                <span class="filter-label">Filter:</span>
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="sentinel">Sentinel</button>
+                <button class="filter-chip" data-filter="investigator">Investigator</button>
+                <button class="filter-chip" data-filter="remediation">Remediation</button>
+                <button class="filter-chip" data-filter="auditor">Auditor</button>
+              </div>
+              <span class="terminal-stats" id="terminal-stats">0 log entries</span>
+            </div>
+            <div class="terminal-feed" id="terminal-feed">
+              <div class="term-entry term-system">
+                <span class="term-time">[SYSTEM]</span>
+                <span class="term-body">Cyber-Nova Multi-Agent Mesh initialized. Awaiting dispatch.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Patch Diff Inspector -->
+          <div class="tab-pane" id="pane-diff">
+            <div class="diff-header-bar" id="diff-header-bar">
+              <span class="diff-file-label">Target File: <strong id="diff-target-file">order_service.py</strong></span>
+              <span class="diff-author-label">Author: <strong id="diff-author">Remediation-03</strong></span>
+            </div>
+            <div class="diff-explanation" id="diff-explanation">
+              Awaiting patch synthesis...
+            </div>
+            <pre class="diff-code-view" id="diff-code-view"><code class="diff-code"># Patch diff will appear here after RemediationAgent executes.</code></pre>
+          </div>
+
+          <!-- Tab 3: Sandbox Verification Proof -->
+          <div class="tab-pane" id="pane-sandbox">
+            <div class="sandbox-status-card" id="sandbox-status-card">
+              <div class="sandbox-verdict-box">
+                <span class="sandbox-label">AUTOMATED VERIFICATION STATUS</span>
+                <h3 class="sandbox-verdict" id="sandbox-verdict">PENDING EXECUTION</h3>
+              </div>
+              <div class="sandbox-metrics-grid">
+                <div class="metric-box">
+                  <span class="metric-title">Exploit Blocked</span>
+                  <span class="metric-value" id="val-exploit-blocked">--</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-title">Regression Tests</span>
+                  <span class="metric-value" id="val-regression-passed">--</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-title">Execution Latency</span>
+                  <span class="metric-value" id="val-exec-time">-- ms</span>
+                </div>
+              </div>
+            </div>
+            <h4 class="subhead">SANDBOX HARNESS RUN LOGS</h4>
+            <pre class="sandbox-logs" id="sandbox-logs">Awaiting automated verification run...</pre>
+          </div>
+
+          <!-- Tab 4: Defense-in-Depth Rules -->
+          <div class="tab-pane" id="pane-rules">
+            <div class="rules-subtabs">
+              <button class="rule-tab-btn active" data-rule="waf">ModSecurity WAF Rule</button>
+              <button class="rule-tab-btn" data-rule="yara">YARA File & Memory Signature</button>
+              <button class="rule-tab-btn" data-rule="sigma">Sigma SIEM Detection Rule</button>
+              <button class="btn-copy-rule" id="btn-copy-rule">Copy Active Rule</button>
+            </div>
+            <div class="rules-display-area">
+              <pre class="rule-code" id="rule-content">Awaiting rule synthesis...</pre>
+            </div>
+          </div>
+
+          <!-- Tab 5: Executive Audit & Sign-Off -->
+          <div class="tab-pane" id="pane-compliance">
+            <div class="compliance-layout">
+              <div class="audit-summary-section">
+                <h3>EXECUTIVE INCIDENT POST-MORTEM</h3>
+                <p class="exec-summary-text" id="exec-summary-text">Awaiting audit completion by Auditor-04...</p>
+
+                <h4 class="mt-4">TECHNICAL ROOT CAUSE & BLAST RADIUS</h4>
+                <div class="tech-postmortem-text" id="tech-postmortem-text">--</div>
+
+                <h4 class="mt-4">RECOMMENDED HARDENING ACTIONS</h4>
+                <ul class="action-items-list" id="action-items-list">
+                  <li>Awaiting auditor sign-off.</li>
+                </ul>
+              </div>
+
+              <div class="compliance-matrix-section">
+                <h3>REGULATORY & COMPLIANCE FRAMEWORKS</h3>
+                <div class="compliance-cards" id="compliance-cards">
+                  <div class="framework-card">
+                    <span class="fw-title">NIST SP 800-61r2</span>
+                    <span class="fw-status pending">PENDING</span>
+                  </div>
+                  <div class="framework-card">
+                    <span class="fw-title">OWASP Top 10 (A03)</span>
+                    <span class="fw-status pending">PENDING</span>
+                  </div>
+                  <div class="framework-card">
+                    <span class="fw-title">CIS Controls v8</span>
+                    <span class="fw-status pending">PENDING</span>
+                  </div>
+                  <div class="framework-card">
+                    <span class="fw-title">SOC 2 Type II</span>
+                    <span class="fw-status pending">PENDING</span>
+                  </div>
+                </div>
+
+                <div class="auditor-seal-box" id="auditor-seal-box">
+                  <div class="seal-icon">🔏</div>
+                  <div class="seal-content">
+                    <span class="seal-title">AUDITOR CRYPTOGRAPHIC SEAL</span>
+                    <span class="seal-hash" id="auditor-seal-hash">NOT SIGNED YET</span>
+                    <span class="seal-timestamp" id="auditor-seal-time">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Custom Target Modal -->
+  <div class="cyber-modal-overlay hidden" id="custom-modal">
+    <div class="cyber-modal">
+      <div class="modal-header">
+        <h3>INPUT CUSTOM SECURITY AUDIT TARGET</h3>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="custom-title">Incident Title</label>
+          <input type="text" id="custom-title" class="cyber-input" value="Custom API Endpoint Security Review">
+        </div>
+        <div class="form-group">
+          <label for="custom-file-name">Target File Name</label>
+          <input type="text" id="custom-file-name" class="cyber-input" value="server_handler.py">
+        </div>
+        <div class="form-group">
+          <label for="custom-code">Target Python Source Code</label>
+          <textarea id="custom-code" class="cyber-textarea" rows="8">import os
+import sqlite3
+
+def handle_user_request(user_input):
+    conn = sqlite3.connect("app.db")
+    cursor = conn.cursor()
+    # Insecure query format
+    cursor.execute(f"SELECT * FROM accounts WHERE username = '{user_input}'")
+    return cursor.fetchall()
+</textarea>
+        </div>
+        <div class="form-group">
+          <label for="custom-logs">Alert Logs (one line per event)</label>
+          <textarea id="custom-logs" class="cyber-textarea" rows="3">2026-11-23T05:00:01Z [FIREWALL] 198.51.100.42 - Detected SQL injection pattern in parameter username
+2026-11-23T05:00:02Z [SIEM] Alert: Unauthorized table dump attempt</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cyber btn-outline" id="modal-cancel">Cancel</button>
+        <button class="btn-cyber btn-primary" id="modal-submit">Load Into Swarm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
